@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting…</title>
+    <script>
+      // GitHub Pages SPA redirect:
+      // https://github.com/rafgraph/spa-github-pages
+      (function () {
+        var l = window.location;
+        var base = '/';
+        l.replace(
+          base +
+            '?' +
+            'p=' +
+            encodeURIComponent(l.pathname.replace(base, '')) +
+            '&q=' +
+            encodeURIComponent(l.search.slice(1)) +
+            '&h=' +
+            encodeURIComponent(l.hash.slice(1))
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
+
