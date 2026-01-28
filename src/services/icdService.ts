@@ -135,11 +135,9 @@ export const getChapterData = async (
   lang: string = 'vi'
 ): Promise<ChapterDataResponse> => {
   try {
+    // X-Client-IP: Vite proxy (dev) and Netlify proxy redirect (prod) add it.
     const response = await apiClient.get<ChapterDataResponse>(API_ENDPOINTS.getChapterData, {
       params: { id, lang },
-      headers: {
-        'X-Client-IP': '42.114.35.89', // You may want to get this dynamically
-      },
     });
     return response.data;
   } catch (error) {

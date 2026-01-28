@@ -2,33 +2,39 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import { API_CONFIG } from '@/config/api';
 
 // Create axios instance
+// Note: Browser doesn't allow setting "unsafe headers" like User-Agent, Referer, sec-ch-ua from client-side
+// These headers are only set by the browser itself or via server-side proxy
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_CONFIG.baseURL,
   timeout: API_CONFIG.timeout,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json, text/plain, */*',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
-    'Referer': 'https://icd.kcb.vn/',
-    'sec-ch-ua': '"Not(A:Brand";v="8", "Chromium";v="144", "Google Chrome";v="144"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
+    // Removed unsafe headers that browser blocks:
+    // - User-Agent (browser sets this automatically)
+    // - Referer (browser sets this automatically)
+    // - sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform (browser sets these automatically)
   },
 });
 
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Add auth token if needed
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
-    
-    // Add X-Client-IP header for chapter data requests
-    if (config.url?.includes('/ICD10/data/chapter')) {
-      config.headers['X-Client-IP'] = '42.114.35.89'; // You may want to get this dynamically
+    // Cache-bust + no-cache to avoid 304 / stale CDN
+    if (config.params) {
+      config.params._t = Date.now();
+    } else {
+      config.params = { _t: Date.now() };
     }
+    config.headers = config.headers || {};
+    config.headers['Cache-Control'] = 'no-cache';
+    
+    // Debug log
+    console.log('API Request:', {
+      baseURL: config.baseURL,
+      url: config.url,
+      fullURL: `${config.baseURL}${config.url}`,
+    });
     
     return config;
   },
@@ -48,6 +54,8 @@ apiClient.interceptors.response.use(
     } else if (error.request) {
       // Request was made but no response received
       console.error('Network Error:', error.request);
+      console.error('Request URL:', error.config?.url);
+      console.error('Request baseURL:', error.config?.baseURL);
     } else {
       // Something else happened
       console.error('Error:', error.message);

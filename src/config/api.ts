@@ -1,11 +1,13 @@
 // API Configuration
-// You can override this by setting VITE_API_BASE_URL in .env file
-// In development, use proxy (/api) to avoid CORS issues
-// In production, use full URL or configure your own proxy
+// Dev: Vite proxy /api -> ccs.whiteneuron.com (headers giống ảnh)
+// Prod: Vercel Serverless Function proxy, gửi request headers giống local
 export const API_CONFIG = {
   baseURL:
     import.meta.env.VITE_API_BASE_URL ||
-    (import.meta.env.DEV ? '/api' : 'https://ccs.whiteneuron.com/api'),
+    (import.meta.env.DEV 
+      ? '/api' // Development: Vite proxy
+      : '/api/proxy' // Production: Vercel Serverless Function (headers giống local)
+    ),
   timeout: 10000,
 };
 
