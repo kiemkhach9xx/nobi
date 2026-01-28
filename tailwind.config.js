@@ -27,4 +27,8 @@ export default {
     },
   },
   plugins: [],
+  // Suppress warnings for unknown classes
+  corePlugins: {
+    preflight: true,
+  },
 }
