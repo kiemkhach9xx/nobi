@@ -5,6 +5,25 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hệ thống Quản lý Mã hóa Lâm sàng Khám chữa bệnh - ICD Vietnam</title>
+    <script>
+      // GitHub Pages SPA redirect (reads params from 404.html)
+      (function () {
+        var l = window.location;
+        if (l.search.startsWith('?p=')) {
+          var params = new URLSearchParams(l.search);
+          var p = params.get('p') || '';
+          var q = params.get('q') || '';
+          var h = params.get('h') || '';
+          var base = '/';
+          var newUrl =
+            base +
+            (p ? p.replace(/^\//, '') : '') +
+            (q ? '?' + q : '') +
+            (h ? '#' + h : '');
+          window.history.replaceState(null, '', newUrl);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

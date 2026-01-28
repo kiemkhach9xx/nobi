@@ -146,11 +146,57 @@ curl "https://<your-site>.vercel.app/api/proxy/ICD10/data/chapter?id=A00-B99&lan
 - File: `api/proxy.ts`
 - Vercel tự động detect functions trong thư mục `api/`
 
+### Deploy lên GitHub Pages
+
+Dự án đã được cấu hình sẵn để deploy lên GitHub Pages bằng `gh-pages`.
+
+#### Cách deploy:
+
+1. **Đảm bảo đã push code lên GitHub repository**
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
+
+2. **Chạy lệnh deploy:**
+   ```bash
+   npm run deploy
+   ```
+   
+   Lệnh này sẽ:
+   - Tự động build project (`predeploy` script)
+   - Deploy thư mục `dist/` lên branch `gh-pages` của repository
+
+3. **Cấu hình GitHub Pages:**
+   - Vào GitHub repository → **Settings** → **Pages**
+   - **Source**: Chọn branch **`gh-pages`**
+   - **Folder**: Chọn **`/ (root)`**
+   - Click **Save**
+
+4. **Truy cập site:**
+   - URL sẽ là: `https://<username>.github.io/<repo-name>/`
+   - Ví dụ: `https://kiemkhach9xx.github.io/nobi/`
+
+#### Lưu ý về CORS và Headers trên GitHub Pages:
+
+- Trên GitHub Pages, không có server-side proxy như Vercel/Netlify Functions
+- Dự án đã được cấu hình để **gọi trực tiếp API** `https://ccs.whiteneuron.com/api` trên production
+- Nếu API server không cho phép CORS từ GitHub Pages domain, bạn có thể gặp lỗi CORS
+- Trong trường hợp đó, cần sử dụng một proxy service khác hoặc yêu cầu backend API cho phép CORS
+
+#### Cấu hình đã được thiết lập:
+
+- ✅ `base: '/nobi/'` trong `vite.config.ts` (đúng với repo name)
+- ✅ `basename="/nobi"` trong `BrowserRouter` (React Router)
+- ✅ `public/404.html` để xử lý SPA routing trên GitHub Pages
+- ✅ Script redirect trong `index.html` để xử lý refresh routes
+
 ### Deploy lên các platform khác
 
 Files trong thư mục `dist/` có thể được deploy lên:
 - **Netlify**: Cần tạo `netlify.toml` và chuyển function sang `netlify/functions/`
-- **GitHub Pages**: Cần cấu hình base path trong `vite.config.ts`
+- **Vercel**: Đã có sẵn `vercel.json` và `api/proxy.ts`
 - **AWS S3 + CloudFront**: Upload `dist/` lên S3 bucket
 - **Firebase Hosting**: Sử dụng `firebase deploy`
 
